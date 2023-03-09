@@ -20,13 +20,18 @@ for files in os.walk("data"):
             zip_ref.extractall("data")
     if 'CompetitionTags.csv' not in files:
         api.dataset_download_file('Kaggle/meta-kaggle', 'CompetitionTags.csv', path="data")
+    # if 'Organizations.csv' not in files:
+    #     api.dataset_download_file('Kaggle/meta-kaggle', 'Organizations.csv', path="data")
     # if 'Tags.csv' not in files:
-    #     api.dataset_download_file('Kaggle/meta-kaggle', file_name="Tags.csv", path="data")
+    #     api.dataset_download_file('Kaggle/meta-kaggle', 'Tags.csv', path="data")
 
 df_competitions = pd.read_csv("data/Competitions.csv")
 df_competitions_tags = pd.read_csv("data/CompetitionTags.csv")
+df_tags = pd.read_csv("data/Tags.csv")
+df_organizations = pd.read_csv("data/Organizations.csv")
 
 tags_columns = set(df_competitions_tags['TagId'])
+# df_competitions = df_competitions.reindex(columns=df_competitions.columns.tolist() + list(tags_columns))
 
 for index, row in df_competitions_tags.iterrows():
     df_competitions.loc[df_competitions['Id'] == row['CompetitionId'], str(row['TagId'])] = 1
@@ -34,4 +39,12 @@ for index, row in df_competitions_tags.iterrows():
 for tag in tags_columns:
     df_competitions[str(tag)] = np.where(df_competitions[str(tag)] != 1, 0, 1)
 
-df_competitions.to_csv("data/competitions_data.csv", sep='\t', encoding='utf-8')
+for index, row in df_tags.iterrows():
+    df_competitions = df_competitions.rename(columns={str(row['Id']): row['Name']})
+
+df_competitions['OrganizationId'] = df_competitions['OrganizationId'].astype(str)
+for index, row in df_organizations.iterrows():
+    df_competitions.loc[df_competitions['OrganizationId'] == str(float(row['Id'])), 'OrganizationId'] = row['Name']
+
+df_competitions = df_competitions.rename(columns={'OrganizationId': 'OrganizationName'})
+df_competitions.to_csv("out.csv", sep='\t', encoding='utf-8')
