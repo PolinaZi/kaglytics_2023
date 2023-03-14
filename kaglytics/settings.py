@@ -83,6 +83,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'kaglytics_2023',
         'USER': 'postgres',
+        # TODO убрать свои данные
         'PASSWORD': 'lasyon777',
         'HOST': 'localhost',
         'PORT': 5432
