@@ -47,4 +47,4 @@ for index, row in df_organizations.iterrows():
     df_competitions.loc[df_competitions['OrganizationId'] == str(float(row['Id'])), 'OrganizationId'] = row['Name']
 
 df_competitions = df_competitions.rename(columns={'OrganizationId': 'OrganizationName'})
-df_competitions.to_csv("out.csv", sep='\t', encoding='utf-8')
+df_competitions.to_csv("data/out.csv", sep=',', encoding='utf-8', index=False)
