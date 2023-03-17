@@ -54,13 +54,15 @@ def update_competitions_info_table():
         deadline_date_object = datetime.strptime(row['DeadlineDate'], '%m/%d/%Y %H:%M:%S')
         if deadline_date_object.year == datetime.now().year:
             new_competition = extract_competition_from_row(row)
-            try:
-                competition = Competition.objects.get(title=new_competition.title)
-                competition = new_competition
-                new_competition.id = competition.id
+            competitions = Competition.objects.filter(kaggle_id=new_competition.kaggle_id)
+            if competitions.count() > 1:
+                for i in range(1, competitions.count()):
+                    competitions[i].delete()
+                new_competition.id = competitions[0].id
                 new_competition.save()
-            except Competition.DoesNotExist as e:
+            elif competitions.count() == 0:
                 new_competition.save()
+                print(f"Updated table. Add competition with id {new_competition.id}")
         else:
             continue
     print("Competitions info table updated successfully.")
