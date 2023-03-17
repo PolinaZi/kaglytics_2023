@@ -5,6 +5,7 @@ User = get_user_model()
 
 
 class Tag(models.Model):
+    kaggle_id = models.IntegerField(null=True, blank=True)
     name = models.CharField(max_length=100)
 
 
@@ -13,6 +14,7 @@ class Category(models.Model):
 
 
 class Organization(models.Model):
+    kaggle_id = models.IntegerField(null=True, blank=True)
     name = models.CharField(max_length=200)
 
 
@@ -25,6 +27,7 @@ class RewardType(models.Model):
 
 
 class Competition(models.Model):
+    kaggle_id = models.IntegerField(null=True, blank=True)
     title = models.CharField(max_length=250)
     description = models.TextField(null=True)
     category = models.ForeignKey(Category, null=True, on_delete=models.SET_NULL)

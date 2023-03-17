@@ -8,14 +8,14 @@ from api.models import Tag
 def add_tags(apps, schema_editor):
     df_tags = pd.read_csv("api/data/Tags.csv")
     for index, row in df_tags.iterrows():
-        new_tag = Tag(name=row['Name'])
+        new_tag = Tag(kaggle_id=row['Id'], name=row['Name'])
         new_tag.save()
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0002_alter_category_name_alter_organization_name'),
+        ('api', '0003_competition_kaggle_id_organization_kaggle_id_and_more'),
     ]
 
     operations = [
