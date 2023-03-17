@@ -8,14 +8,14 @@ from api.models import Organization
 def add_organizations(apps, schema_editor):
     df_organizations = pd.read_csv("api/data/Organizations.csv")
     for index, row in df_organizations.iterrows():
-        new_organization = Organization(name=row['Name'])
+        new_organization = Organization(kaggle_id=row['Id'], name=row['Name'])
         new_organization.save()
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0003_tags_data_migration'),
+        ('api', '0004_tags_data_migration'),
     ]
 
     operations = [
