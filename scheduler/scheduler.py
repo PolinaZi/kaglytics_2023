@@ -9,7 +9,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from django_apscheduler.jobstores import DjangoJobStore, register_events
 
 from api.kaggle_api import api
-from api.models import Competition
+from api.models import Competition, Tag
 from api.utils import extract_competition_from_row
 
 
@@ -49,7 +49,11 @@ def update_competitions_info_file():
 
 def update_competitions_info_table():
     print("Start updating competitions info table...")
+
     df_competitions = pd.read_csv("api/data/out.csv", low_memory=False)
+    tag_names = list(df_competitions.columns.values)
+    tag_names = tag_names[42:]
+
     for index, row in df_competitions.iterrows():
         deadline_date_object = datetime.strptime(row['DeadlineDate'], '%m/%d/%Y %H:%M:%S')
         if deadline_date_object.year == datetime.now().year:
@@ -62,6 +66,13 @@ def update_competitions_info_table():
                 new_competition.save()
             elif competitions.count() == 0:
                 new_competition.save()
+
+                competition_tags = list()
+                for tag in tag_names:
+                    if row[tag] == 1:
+                        competition_tags.append(Tag.objects.get(name=tag))
+                new_competition.tags.set(competition_tags)
+
                 print(f"Updated table. Add competition with id {new_competition.id}")
         else:
             continue
