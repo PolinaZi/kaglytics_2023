@@ -15,14 +15,11 @@ Including another URLconf
 """
 from django.urls import path
 from rest_framework.authtoken.views import obtain_auth_token
-from rest_framework.routers import SimpleRouter
 
-from .views import SignUpUserAPIView
-
-router = SimpleRouter()
+from .views import SignUpUserAPIView, competitions_view
 
 urlpatterns = [
     path('sign-up', SignUpUserAPIView.as_view()),
     path('sign-in', obtain_auth_token),
-    *router.urls
+    path('competitions/active', competitions_view)
 ]
