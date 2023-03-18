@@ -1,13 +1,14 @@
 import jwt
 from django.conf import settings
 from rest_framework import generics, status
-from rest_framework.decorators import permission_classes
-from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.decorators import permission_classes, api_view
+from rest_framework.response import Response
 
-from api.serializers import SignUpSerializer
 from .models import User
 from .utils import Util
+from api.serializers import SignUpSerializer, CompetitionSerializer
+from .services import get_active_competitions
 
 
 @permission_classes([])
@@ -30,6 +31,13 @@ class SignUpView(generics.GenericAPIView):
 
         Util.send_email(data)
         return Response(user_data, status=status.HTTP_201_CREATED)
+
+
+@api_view(["GET"])
+def competitions_view(request):
+    competitions = get_active_competitions()
+    serializer = CompetitionSerializer(competitions, many=True)
+    return Response(serializer.data)
 
 
 class EmailVerifyView(generics.GenericAPIView):
