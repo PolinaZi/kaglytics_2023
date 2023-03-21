@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
 
-from api.models import Category, Organization, EvaluationMetric, RewardType, Tag
+from api.models import Category, Organization, EvaluationMetric, RewardType, Tag, Competition
 
 
 class SignUpSerializer(serializers.ModelSerializer):
@@ -58,21 +58,9 @@ class TagSerializer(serializers.ModelSerializer):
         fields = ('id', 'kaggle_id', 'name')
 
 
-class CompetitionSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
-    kaggle_id = serializers.IntegerField()
-    title = serializers.CharField()
-    description = serializers.CharField()
-    category = CategorySerializer()
-    organization = OrganizationSerializer()
-    evaluationMetric = EvaluationMetricSerializer()
-    maxDailySubmissions = serializers.IntegerField()
-    maxTeamSize = serializers.IntegerField()
-    rewardType = RewardTypeSerializer()
-    rewardQuantity = serializers.IntegerField()
-    totalTeams = serializers.IntegerField()
-    totalCompetitors = serializers.IntegerField()
-    totalSubmissions = serializers.IntegerField()
-    enabledDate = serializers.DateTimeField()
-    deadline = serializers.DateTimeField()
-    # tags = TagSerializer(many=True)
+class CompetitionSerializer(serializers.ModelSerializer):
+    tags = TagSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Competition
+        fields = []  # todo
