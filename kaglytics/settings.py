@@ -131,11 +131,17 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
     'NON_FIELD_ERRORS_KEY': 'error',
-    "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.SessionAuthentication",
-        "rest_framework.authentication.TokenAuthentication"
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication'
     ],
-    "DEFAULT_PERMISSION_CLASSES": [
+    'DEFAULT_PERMISSION_CLASSES': [
         "rest_framework.permissions.IsAuthenticated"
     ]
 }
+
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+EMAIL_HOST = 'smtp.mail.ru'
+EMAIL_PORT = 2525
+EMAIL_HOST_USER = 'leisanahmetova02@mail.ru'
+EMAIL_HOST_PASSWORD = '5bWAuVL7xbG0L7s8cJQ0'

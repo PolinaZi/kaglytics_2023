@@ -1,5 +1,6 @@
 import math
 from datetime import datetime
+from django.core.mail import EmailMessage
 
 from api.models import Organization, Competition, Category, EvaluationMetric, RewardType
 
@@ -31,3 +32,15 @@ def extract_competition_from_row(row):
                                   enabledDate=formatted_enabled_date,
                                   deadline=formatted_deadline_date)
     return new_competition
+
+
+class Util:
+    @staticmethod
+    def send_email(data):
+        email = EmailMessage(
+            subject=data['email_subject'],
+            body=data['email_body'],
+            to=[data['to_email']],
+            from_email='leisanahmetova02@mail.ru'
+        )
+        email.send()

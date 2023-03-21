@@ -17,12 +17,13 @@ from django.urls import path
 from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework.routers import SimpleRouter
 
-from .views import SignUpView
+from .views import SignUpView, EmailVerifyView
 
 router = SimpleRouter()
 
 urlpatterns = [
     path('sign-up', SignUpView.as_view()),
     path('sign-in', obtain_auth_token),
+    path('email-verify', EmailVerifyView.as_view()),
     *router.urls
 ]
