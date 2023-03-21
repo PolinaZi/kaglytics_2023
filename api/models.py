@@ -87,3 +87,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def tokens(self):
         return ''
+
+
+class VerifyCode(models.Model):
+    code = models.CharField(max_length=100)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
