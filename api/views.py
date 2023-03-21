@@ -1,7 +1,7 @@
 import jwt
 from django.conf import settings
-from rest_framework import generics, status
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework import generics, status
 from rest_framework.decorators import permission_classes, api_view
 from rest_framework.response import Response
 
