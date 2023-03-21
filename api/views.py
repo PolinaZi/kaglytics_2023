@@ -5,7 +5,7 @@ from rest_framework.decorators import permission_classes, api_view
 from rest_framework.response import Response
 from django.core.exceptions import ObjectDoesNotExist
 
-from api.serializers import SignUpSerializer, EmailVerifySerializer
+from api.serializers import SignUpSerializer, EmailVerifySerializer, SignInSerializer
 from .models import User, VerifyCode
 from .utils import Util, generate_code
 
@@ -62,3 +62,14 @@ class EmailVerifyView(generics.GenericAPIView):
 
         except ObjectDoesNotExist:
             return Response({'error': 'Invalid link. Follow the link again'}, status=status.HTTP_404_NOT_FOUND)
+
+
+@permission_classes([])
+class SignInView(generics.GenericAPIView):
+    serializer_class = SignInSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)

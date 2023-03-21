@@ -1,6 +1,7 @@
-from rest_framework import serializers
-from .models import User
+from rest_framework import serializers, status
+from django.contrib.auth import authenticate
 
+from .models import User
 from api.models import Category, Organization, EvaluationMetric, RewardType, Tag, Competition
 
 
@@ -90,3 +91,23 @@ class EmailVerifySerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['code']
+
+
+class SignInSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = User
+        fields = ['email', 'password']
+
+    # ругается, что такой юзер уже есть, что странно, я же не нового создаю, а авторизуюсь
+    def validate(self, attrs):
+        email = attrs.get('email', None)
+        password = attrs.get('password', None)
+
+        user = authenticate(email=email, password=password)
+
+        if user is None:
+            raise serializers.ValidationError({'error': 'A user with this email and password was not found.'})
+
+        return user.tokens()
