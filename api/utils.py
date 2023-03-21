@@ -1,4 +1,6 @@
 import math
+import string
+import random
 from datetime import datetime
 from django.core.mail import EmailMessage
 
@@ -44,3 +46,8 @@ class Util:
             from_email='leisanahmetova02@mail.ru'
         )
         email.send()
+
+
+def generate_code():
+    chars = string.ascii_lowercase + string.ascii_uppercase + string.digits
+    return ''.join(random.choice(chars) for _ in range(50))

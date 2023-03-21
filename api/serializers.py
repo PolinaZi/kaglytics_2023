@@ -16,6 +16,9 @@ class SignUpSerializer(serializers.ModelSerializer):
     password_max_length_error_message = {
         'error': 'Ensure this field has no more than 68 characters'}
 
+    email_exists_error_message = {
+        'error': 'User with this email already exists'}
+
     class Meta:
         model = User
         fields = ['username', 'email', 'password']
@@ -24,6 +27,10 @@ class SignUpSerializer(serializers.ModelSerializer):
         email = attrs.get('email', '')
         username = attrs.get('username', '')
         password = attrs.get('password', '')
+
+        if User.objects.filter(email=email).exists():
+            raise serializers.ValidationError(
+                self.email_exists_error_message)
 
         if len(password) < 5:
             raise serializers.ValidationError(self.password_min_length_error_message)
@@ -75,3 +82,11 @@ class CompetitionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Competition
         fields = []  # todo
+
+
+class EmailVerifySerializer(serializers.ModelSerializer):
+    code = serializers.CharField(max_length=100)
+
+    class Meta:
+        model = User
+        fields = ['code']

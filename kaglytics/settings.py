@@ -135,7 +135,7 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication'
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        "rest_framework.permissions.IsAuthenticated"
+        'rest_framework.permissions.IsAuthenticated',
     ]
 }
 
@@ -143,5 +143,5 @@ EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 EMAIL_HOST = 'smtp.mail.ru'
 EMAIL_PORT = 2525
-EMAIL_HOST_USER = 'leisanahmetova02@mail.ru'
-EMAIL_HOST_PASSWORD = '5bWAuVL7xbG0L7s8cJQ0'
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')

@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import (
     AbstractBaseUser, BaseUserManager, PermissionsMixin)
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class Tag(models.Model):
@@ -86,7 +87,11 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.email
 
     def tokens(self):
-        return ''
+        refresh = RefreshToken.for_user(self)
+        return {
+            'access': str(refresh.access_token),
+            'refresh': str(refresh)
+        }
 
 
 class VerifyCode(models.Model):
