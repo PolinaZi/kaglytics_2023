@@ -7,8 +7,7 @@ from rest_framework.response import Response
 
 from .models import User
 from .utils import Util
-from api.serializers import SignUpSerializer, CompetitionSerializer
-from .services import get_active_competitions
+from api.serializers import SignUpSerializer
 
 
 @permission_classes([])
@@ -35,9 +34,8 @@ class SignUpView(generics.GenericAPIView):
 
 @api_view(["GET"])
 def competitions_view(request):
-    competitions = get_active_competitions()
-    serializer = CompetitionSerializer(competitions, many=True)
-    return Response(serializer.data)
+    # todo
+    return Response()
 
 
 class EmailVerifyView(generics.GenericAPIView):
