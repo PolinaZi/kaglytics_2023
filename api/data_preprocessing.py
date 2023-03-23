@@ -59,5 +59,5 @@ def preprocess_data(df):
     return x, y
 
 
-data = pd.read_csv("data/out.csv", low_memory=False)
+data = pd.read_csv("../web/data/out.csv", low_memory=False)
 x, y = preprocess_data(data)
