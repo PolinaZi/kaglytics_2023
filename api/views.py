@@ -28,8 +28,7 @@ class SignUpView(generics.GenericAPIView):
         verify_code = VerifyCode(code=code, user=user)
         verify_code.save()
 
-        # absurl = f"{os.environ.get('FRONT_URL')}/email-verify?code=" + str(code)
-        absurl = f"http://localhost:4200/email-verify?code=" + str(code)
+        absurl = f"{os.environ.get('FRONT_URL')}/email-verify?code=" + str(code)
         email_body = 'Hi ' + user.username + '. Use the link below to to verify your email \n' + absurl
         data = {'email_body': email_body, 'to_email': user.email, 'email_subject': 'Verify your email'}
 
