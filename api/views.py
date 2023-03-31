@@ -4,8 +4,9 @@ from rest_framework import generics, status
 from rest_framework.decorators import permission_classes, api_view
 from rest_framework.response import Response
 from django.core.exceptions import ObjectDoesNotExist
+from rest_framework_simplejwt.views import TokenObtainPairView
 
-from api.serializers import SignUpSerializer, EmailVerifySerializer
+from api.serializers import SignUpSerializer, EmailVerifySerializer, SignInSerializer
 from .models import User, VerifyCode
 from .utils import Util, generate_code
 
@@ -61,4 +62,10 @@ class EmailVerifyView(generics.GenericAPIView):
             return Response(user.tokens(), status=status.HTTP_200_OK)
 
         except ObjectDoesNotExist:
-            return Response({'error': 'Invalid link. Follow the link again'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'An error has occurred. Please follow the link again'},
+                            status=status.HTTP_404_NOT_FOUND)
+
+
+@permission_classes([])
+class SignInView(TokenObtainPairView):
+    serializer_class = SignInSerializer

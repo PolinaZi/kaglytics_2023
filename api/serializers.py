@@ -1,6 +1,7 @@
-from rest_framework import serializers
-from .models import User
+from rest_framework import serializers, exceptions
+from rest_framework_simplejwt.serializers import TokenObtainSerializer
 
+from .models import User
 from api.models import Category, Organization, EvaluationMetric, RewardType, Tag, Competition
 
 
@@ -90,3 +91,19 @@ class EmailVerifySerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['code']
+
+
+class SignInSerializer(TokenObtainSerializer):
+    def validate(self, attrs):
+        email = attrs.get('email', '')
+        password = attrs.get('password', '')
+
+        user = User.objects.filter(email=email).first()
+
+        if (user is None) or (not user.check_password(password)):
+            raise exceptions.AuthenticationFailed({'error': 'Invalid email or password'})
+
+        if not user.is_verified:
+            raise exceptions.AuthenticationFailed({'error': 'Your email is not verified. Please verify it'})
+
+        return user.tokens()
