@@ -4,6 +4,7 @@ from rest_framework import generics, status
 from rest_framework.decorators import permission_classes, api_view
 from rest_framework.response import Response
 from django.core.exceptions import ObjectDoesNotExist
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 from api.serializers import SignUpSerializer, EmailVerifySerializer, SignInSerializer
 from .models import User, VerifyCode
@@ -27,7 +28,8 @@ class SignUpView(generics.GenericAPIView):
         verify_code = VerifyCode(code=code, user=user)
         verify_code.save()
 
-        absurl = f"{os.environ.get('FRONT_URL')}/email-verify?code=" + str(code)
+        # absurl = f"{os.environ.get('FRONT_URL')}/email-verify?code=" + str(code)
+        absurl = f"http://localhost:4200/email-verify?code=" + str(code)
         email_body = 'Hi ' + user.username + '. Use the link below to to verify your email \n' + absurl
         data = {'email_body': email_body, 'to_email': user.email, 'email_subject': 'Verify your email'}
 
@@ -61,15 +63,10 @@ class EmailVerifyView(generics.GenericAPIView):
             return Response(user.tokens(), status=status.HTTP_200_OK)
 
         except ObjectDoesNotExist:
-            return Response({'error': 'Invalid link. Follow the link again'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'An error has occurred. Please follow the link again'},
+                            status=status.HTTP_404_NOT_FOUND)
 
 
 @permission_classes([])
-class SignInView(generics.GenericAPIView):
+class SignInView(TokenObtainPairView):
     serializer_class = SignInSerializer
-
-    def post(self, request):
-        serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        return Response(serializer.data, status=status.HTTP_200_OK)
