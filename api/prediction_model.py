@@ -2,6 +2,8 @@ from catboost import Pool
 from catboost import CatBoostRegressor
 from sklearn.model_selection import train_test_split
 
+fitted_model_filename = 'fitted_model.sav'
+
 
 def split_data(x, y, test_size):
     return train_test_split(x, y, test_size=test_size, random_state=13)
@@ -34,4 +36,3 @@ def fit_model(train_pool, validation_pool, **kwargs):
         eval_set=validation_pool,
         verbose=100,
     )
-

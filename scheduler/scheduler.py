@@ -2,6 +2,7 @@ import os
 import sys
 import zipfile
 from datetime import datetime
+import joblib
 
 import numpy as np
 import pandas as pd
@@ -11,6 +12,8 @@ from django_apscheduler.jobstores import DjangoJobStore, register_events
 from api.kaggle_api import api
 from api.models import Competition, Tag
 from api.utils import extract_competition_from_row
+from api.data_preprocessing import preprocess_data, cat_features, text_features
+from api.prediction_model import create_pools, fit_model, fitted_model_filename
 
 
 def update_competitions_info_file():
@@ -79,12 +82,22 @@ def update_competitions_info_table():
     print("Competitions info table updated successfully.")
 
 
+def fit_model_with_new_data():
+    data = pd.read_csv("api/data/out.csv", low_memory=False)
+    x, y = preprocess_data(data)
+    train_pool, validation_pool = create_pools(x, y, 0.25, cat_features, text_features)
+    fitted_model = fit_model(train_pool, validation_pool)
+    joblib.dump(fitted_model, f"./api/models/{fitted_model_filename}")
+
+
 def start():
     scheduler = BackgroundScheduler()
     scheduler.add_jobstore(DjangoJobStore(), "default")
     scheduler.add_job(update_competitions_info_file, 'interval', hours=24, name='update_competitions_info_file',
                       jobstore='default')
     scheduler.add_job(update_competitions_info_table, 'interval', hours=24, name='update_competitions_info_table',
+                      jobstore='default')
+    scheduler.add_job(fit_model_with_new_data, 'interval', hours=24, name='fit_model_with_new_data',
                       jobstore='default')
     register_events(scheduler)
     scheduler.start()

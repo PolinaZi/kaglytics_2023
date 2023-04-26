@@ -11,3 +11,4 @@ django-environ==0.10.0
 djangorestframework-simplejwt==5.2.2
 catboost==1.1.1
 scikit-learn==1.2.2
+joblib==1.2.0
