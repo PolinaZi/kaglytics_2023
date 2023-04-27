@@ -8,12 +8,13 @@ import numpy as np
 import pandas as pd
 from apscheduler.schedulers.background import BackgroundScheduler
 from django_apscheduler.jobstores import DjangoJobStore, register_events
+from sklearn.metrics import mean_absolute_error, r2_score, mean_squared_error
 
 from api.kaggle_api import api
 from api.models import Competition, Tag
 from api.utils import extract_competition_from_row
 from api.data_preprocessing import preprocess_data, cat_features, text_features
-from api.prediction_model import create_pools, fit_model, fitted_model_filename
+from api.prediction_model import create_pools, fit_model, fitted_model_filename, get_model
 
 
 def update_competitions_info_file():
@@ -83,14 +84,20 @@ def update_competitions_info_table():
 
 
 def fit_model_with_new_data():
+    print("Start fitting model with new data...")
+
+    model = get_model()
     data = pd.read_csv("api/data/out.csv", low_memory=False)
     x, y = preprocess_data(data)
     train_pool, validation_pool = create_pools(x, y, 0.25, cat_features, text_features)
-    fitted_model = fit_model(train_pool, validation_pool)
-    joblib.dump(fitted_model, f"./api/models/{fitted_model_filename}")
+    fit_model(model, train_pool, validation_pool)
+
+    joblib.dump(model, f"./api/models/{fitted_model_filename}")
+    print("Model was fitted successfully.")
 
 
 def start():
+
     scheduler = BackgroundScheduler()
     scheduler.add_jobstore(DjangoJobStore(), "default")
     scheduler.add_job(update_competitions_info_file, 'interval', hours=24, name='update_competitions_info_file',

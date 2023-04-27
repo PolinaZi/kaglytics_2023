@@ -24,14 +24,16 @@ def create_pools(x, y, test_size, cat_features, text_features):
     return train_pool, validation_pool
 
 
-def fit_model(train_pool, validation_pool, **kwargs):
-    model = CatBoostRegressor(
+def get_model(**kwargs):
+    return CatBoostRegressor(
         iterations=1000,
         learning_rate=0.05,
         **kwargs
     )
 
-    return model.fit(
+
+def fit_model(model, train_pool, validation_pool):
+    model.fit(
         train_pool,
         eval_set=validation_pool,
         verbose=100,
