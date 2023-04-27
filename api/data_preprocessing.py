@@ -57,7 +57,3 @@ def preprocess_data(df):
     y = df['totalcompetitors']
 
     return x, y
-
-
-data = pd.read_csv("../web/data/out.csv", low_memory=False)
-x, y = preprocess_data(data)
