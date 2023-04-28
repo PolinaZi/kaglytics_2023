@@ -36,6 +36,21 @@ def extract_competition_from_row(row):
     return new_competition
 
 
+def extract_active_competition_from_row(row):
+    return Competition(kaggle_id=row['id'],
+                       title=row['title'],
+                       description=row['description'],
+                       category=Category(name=row['category']),
+                       organization=Organization(name=row['organizationname']),
+                       evaluationMetric=EvaluationMetric(name=row['evaluationmetric']),
+                       maxDailySubmissions=int(row['maxdailysubmissions']),
+                       maxTeamSize=int(row['maxteamsize']),
+                       rewardType=RewardType(name=row['rewardtype']),
+                       rewardQuantity=int(row['rewardquantity']),
+                       enabledDate=row['enableddate'],
+                       deadline=row['deadline'])
+
+
 class Util:
     @staticmethod
     def send_email(data):
