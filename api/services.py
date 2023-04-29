@@ -58,6 +58,7 @@ def active_competitions_to_df():
     for tag in tags_names:
         tag_list = []
         for index, row in active_df.iterrows():
+            row['tags'] = map(lambda t: str(t), row['tags'])
             tag_list.append(1 if tag in row['tags'] else 0)
         active_df[tag] = tag_list
 
