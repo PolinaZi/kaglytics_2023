@@ -4,7 +4,7 @@ import random
 from datetime import datetime
 from django.core.mail import EmailMessage
 
-from api.models import Organization, Competition, Category, EvaluationMetric, RewardType
+from api.models import Organization, Competition, Category, EvaluationMetric, RewardType, Tag
 
 
 def extract_competition_from_row(row):
@@ -49,6 +49,24 @@ def extract_active_competition_from_row(row):
                        rewardQuantity=int(row['rewardquantity']),
                        enabledDate=row['enableddate'],
                        deadline=row['deadline'])
+
+
+# todo
+# def ext(df_competitions):
+#     competitions = []
+#     tag_names = list(df_competitions.columns.values)
+#     tag_names = tag_names[42:]
+#
+#     for index, row in df_competitions.iterrows():
+#         try:
+#             new_competition = extract_competition_from_row(row)
+#             new_competition.save()
+#
+#             competition_tags = list()
+#             for tag in tag_names:
+#                 if row[tag] == 1:
+#                     competition_tags.append(Tag.objects.get(name=tag))
+#             new_competition.tags.set(competition_tags)
 
 
 class Util:
