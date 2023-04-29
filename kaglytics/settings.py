@@ -87,7 +87,7 @@ WSGI_APPLICATION = 'kaglytics.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'kaglytics_2023',
+        'NAME': 'kaglytics_2023_4',
         'USER': env('DB_USER'),
         'PASSWORD': env('DB_PASSWORD'),
         'HOST': 'localhost',

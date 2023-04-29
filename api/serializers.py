@@ -78,11 +78,17 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class CompetitionSerializer(serializers.ModelSerializer):
+    category = CategorySerializer(read_only=True)
+    organization = OrganizationSerializer(read_only=True)
+    evaluationMetric = EvaluationMetricSerializer(read_only=True)
+    rewardType = RewardTypeSerializer(read_only=True)
     tags = TagSerializer(many=True, read_only=True)
 
     class Meta:
         model = Competition
-        fields = []  # todo
+        fields = ('id', 'kaggle_id', 'title', 'description', 'category', 'organization', 'evaluationMetric',
+                  'rewardType', 'rewardQuantity', 'maxDailySubmissions', 'maxTeamSize', 'totalTeams',
+                  'totalCompetitors', 'totalSubmissions', 'enabledDate', 'deadline', 'tags')
 
 
 class EmailVerifySerializer(serializers.ModelSerializer):
