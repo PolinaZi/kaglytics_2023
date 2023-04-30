@@ -78,11 +78,64 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class CompetitionSerializer(serializers.ModelSerializer):
+    category = CategorySerializer(read_only=True)
+    organization = OrganizationSerializer(read_only=True)
+    evaluationMetric = EvaluationMetricSerializer(read_only=True)
+    rewardType = RewardTypeSerializer(read_only=True)
     tags = TagSerializer(many=True, read_only=True)
 
     class Meta:
         model = Competition
-        fields = []  # todo
+        fields = ('id', 'kaggle_id', 'title', 'description', 'category', 'organization', 'evaluationMetric',
+                  'rewardType', 'rewardQuantity', 'maxDailySubmissions', 'maxTeamSize', 'totalTeams',
+                  'totalCompetitors', 'totalSubmissions', 'enabledDate', 'deadline', 'tags')
+
+
+class TagDtoSerializer(serializers.Serializer):
+    sid = serializers.IntegerField()
+    kaggle_id = serializers.IntegerField()
+    name = serializers.CharField()
+
+
+class CategoryDtoSerializer(serializers.Serializer):
+    sid = serializers.IntegerField()
+    name = serializers.CharField()
+
+
+class OrganizationDtoSerializer(serializers.Serializer):
+    sid = serializers.IntegerField()
+    kaggle_id = serializers.IntegerField()
+    name = serializers.CharField()
+
+
+class EvaluationMetricDtoSerializer(serializers.Serializer):
+    sid = serializers.IntegerField()
+    name = serializers.CharField()
+
+
+class RewardTypeDtoSerializer(serializers.Serializer):
+    sid = serializers.IntegerField()
+    name = serializers.CharField()
+
+
+class CompetitionDtoSerializer(serializers.Serializer):
+    sid = serializers.IntegerField()
+    kaggle_id = serializers.IntegerField()
+    title = serializers.CharField()
+    description = serializers.CharField()
+    category_dto = CategoryDtoSerializer()
+    organization_dto = OrganizationDtoSerializer()
+    evaluation_metric_dto = EvaluationMetricDtoSerializer()
+    max_daily_submissions = serializers.IntegerField()
+    max_team_size = serializers.IntegerField()
+    reward_type_dto = RewardTypeDtoSerializer()
+    reward_quantity = serializers.IntegerField()
+    total_teams = serializers.IntegerField()
+    total_competitors = serializers.IntegerField()
+    total_submissions = serializers.IntegerField()
+    enabled_date = serializers.DateTimeField()
+    deadline = serializers.DateTimeField()
+    tags_dto = TagDtoSerializer(many=True)
 
 
 class EmailVerifySerializer(serializers.ModelSerializer):

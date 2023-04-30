@@ -5,9 +5,12 @@ from rest_framework.decorators import permission_classes, api_view
 from rest_framework.response import Response
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework_simplejwt.views import TokenObtainPairView
+from pprint import pprint
 
-from api.serializers import SignUpSerializer, EmailVerifySerializer, SignInSerializer
+from api.serializers import SignUpSerializer, EmailVerifySerializer, SignInSerializer, CompetitionSerializer, \
+    CompetitionDtoSerializer
 from .models import User, VerifyCode
+from .services import api_competitions_to_df, active_competitions_to_dto_list, get_active_competitions
 from .utils import Util, generate_code
 
 
@@ -38,8 +41,11 @@ class SignUpView(generics.GenericAPIView):
 
 @api_view(["GET"])
 def competitions_view(request):
-    # todo
-    return Response()
+    api_active_competitions = get_active_competitions()
+    active_competitions_df = api_competitions_to_df(api_active_competitions)
+    active_competitions = active_competitions_to_dto_list(active_competitions_df)
+    serializer = CompetitionDtoSerializer(active_competitions, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @permission_classes([])

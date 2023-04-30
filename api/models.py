@@ -3,27 +3,98 @@ from django.contrib.auth.models import (
     AbstractBaseUser, BaseUserManager, PermissionsMixin)
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from api.dto import TagDto, CategoryDto, OrganizationDto, EvaluationMetricDto, RewardTypeDto, CompetitionDto
+
 
 class Tag(models.Model):
     kaggle_id = models.IntegerField(null=True, blank=True)
     name = models.CharField(max_length=100)
 
+    def to_dto(self):
+        return TagDto(
+            sid=self.id,
+            kaggle_id=self.kaggle_id,
+            name=self.name,
+        )
+
+    @staticmethod
+    def from_dto(dto: TagDto):
+        return Tag(
+            id=dto.sid,
+            kaggle_id=dto.kaggle_id,
+            name=dto.name,
+        )
+
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
+
+    def to_dto(self):
+        return CategoryDto(
+            sid=self.id,
+            name=self.name,
+        )
+
+    @staticmethod
+    def from_dto(dto: CategoryDto):
+        return Category(
+            id=dto.sid,
+            name=dto.name,
+        )
 
 
 class Organization(models.Model):
     kaggle_id = models.IntegerField(null=True, blank=True)
     name = models.CharField(max_length=200)
 
+    def to_dto(self):
+        return OrganizationDto(
+            sid=self.id,
+            kaggle_id=self.kaggle_id,
+            name=self.name,
+        )
+
+    @staticmethod
+    def from_dto(dto: OrganizationDto):
+        return Organization(
+            id=dto.sid,
+            kaggle_id=dto.kaggle_id,
+            name=dto.name,
+        )
+
 
 class EvaluationMetric(models.Model):
     name = models.CharField(max_length=250)
 
+    def to_dto(self):
+        return EvaluationMetricDto(
+            sid=self.id,
+            name=self.name,
+        )
+
+    @staticmethod
+    def from_dto(dto: EvaluationMetricDto):
+        return EvaluationMetric(
+            id=dto.sid,
+            name=dto.name,
+        )
+
 
 class RewardType(models.Model):
     name = models.CharField(max_length=100)
+
+    def to_dto(self):
+        return RewardTypeDto(
+            sid=self.id,
+            name=self.name,
+        )
+
+    @staticmethod
+    def from_dto(dto: RewardTypeDto):
+        return RewardType(
+            id=dto.sid,
+            name=dto.name,
+        )
 
 
 class Competition(models.Model):
@@ -43,6 +114,27 @@ class Competition(models.Model):
     enabledDate = models.DateTimeField()
     deadline = models.DateTimeField()
     tags = models.ManyToManyField(Tag)
+
+    def to_dto(self):
+        return CompetitionDto(
+            sid=self.id,
+            kaggle_id=self.kaggle_id,
+            title=self.title,
+            description=self.description,
+            category_dto=Category.to_dto(self.category),
+            organization_dto=Organization.to_dto(self.organization),
+            evaluation_metric_dto=EvaluationMetric.to_dto(self.evaluationMetric),
+            max_daily_submissions=self.maxDailySubmissions,
+            max_team_size=self.maxTeamSize,
+            reward_type_dto=RewardType.to_dto(self.rewardType),
+            reward_quantity=self.rewardQuantity,
+            total_teams=self.totalTeams,
+            total_competitors=self.totalCompetitors,
+            total_submissions=self.totalSubmissions,
+            enabled_date=self.enabledDate,
+            deadline=self.deadline,
+            tags_dto=list()
+        )
 
 
 class UserManager(BaseUserManager):
