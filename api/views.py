@@ -44,8 +44,6 @@ def competitions_view(request):
     api_active_competitions = get_active_competitions()
     active_competitions_df = api_competitions_to_df(api_active_competitions)
     active_competitions = active_competitions_to_dto_list(active_competitions_df)
-    for c in active_competitions:
-        pprint(vars(c))
     serializer = CompetitionDtoSerializer(active_competitions, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
