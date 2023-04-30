@@ -1,8 +1,11 @@
-from api.kaggle_api import api
-from .models import Tag
-from .utils import extract_active_competition_from_row, extract_competition_from_row
-import pandas as pd
 import re
+
+import pandas as pd
+
+from api.kaggle_api import api
+from .dto import TagDto
+from .models import Tag
+from .utils import extract_active_competition_from_row
 
 
 def get_active_competitions():
@@ -31,29 +34,28 @@ def get_filtered_active_competitions(title=None, category=None, reward_type=None
     return competitions
 
 
-def active_competitions_to_list(df_competitions):
+def active_competitions_to_dto_list(df_competitions):
     competitions = []
 
     tag_names = list(df_competitions.columns.values)
     tag_names = tag_names[42:]
 
     for index, row in df_competitions.iterrows():
-        new_competition = extract_active_competition_from_row(row)
+        new_competition_dto = extract_active_competition_from_row(row).to_dto()
 
         competition_tags = list()
         for tag in tag_names:
             if row[tag] == 1:
-                competition_tags.append(Tag.objects.get(name=tag))
+                try:
+                    c_tag = Tag.objects.get(name=tag).to_dto()
+                except Tag.DoesNotExist:
+                    c_tag = TagDto(sid=0, kaggle_id=0, name=tag)
+                competition_tags.append(c_tag)
 
-        new_competition.tags.set(competition_tags)
-        competitions.append(new_competition)
+        new_competition_dto.tags_dto = competition_tags
+        competitions.append(new_competition_dto)
+
     return competitions
-
-    # for index, row in df_competitions.iterrows():
-    #     new_competition = extract_active_competition_from_row(row)
-    #     competitions.append(new_competition)
-    #
-    # return competitions
 
 
 def api_competitions_to_df(competitions):

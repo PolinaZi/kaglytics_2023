@@ -4,6 +4,7 @@ import random
 from datetime import datetime
 from django.core.mail import EmailMessage
 
+from api.dto import CompetitionDto
 from api.models import Organization, Competition, Category, EvaluationMetric, RewardType, Tag
 
 
@@ -37,15 +38,31 @@ def extract_competition_from_row(row):
 
 
 def extract_active_competition_from_row(row):
+    try:
+        category = Category.objects.get(name=row['category'])
+    except Category.DoesNotExist:
+        category = Category(name=row['category'])
+    try:
+        organization = Organization.objects.get(name=row['organizationname'])
+    except Organization.DoesNotExist:
+        organization = Organization(name=row['organizationname'])
+    try:
+        evaluation_metric = EvaluationMetric.objects.get(name=row['evaluationmetric'])
+    except EvaluationMetric.DoesNotExist:
+        evaluation_metric = EvaluationMetric(name=row['evaluationmetric'])
+    try:
+        reward_type = RewardType.objects.get(name=row['rewardtype'])
+    except RewardType.DoesNotExist:
+        reward_type = RewardType(name=row['rewardtype'])
     return Competition(kaggle_id=row['id'],
                        title=row['title'],
                        description=row['description'],
-                       category=Category(name=row['category']),
-                       organization=Organization(name=row['organizationname']),
-                       evaluationMetric=EvaluationMetric(name=row['evaluationmetric']),
+                       category=category,
+                       organization=organization,
+                       evaluationMetric=evaluation_metric,
                        maxDailySubmissions=int(row['maxdailysubmissions']),
                        maxTeamSize=int(row['maxteamsize']),
-                       rewardType=RewardType(name=row['rewardtype']),
+                       rewardType=reward_type,
                        rewardQuantity=int(row['rewardquantity']),
                        enabledDate=row['enableddate'],
                        deadline=row['deadline'])
