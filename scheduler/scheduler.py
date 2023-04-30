@@ -19,13 +19,22 @@ from api.prediction_model import create_pools, fit_model, fitted_model_filename,
 
 def update_competitions_info_file():
     print("Start updating competitions info file...")
-    for files in os.walk("./api/data"):
-        if "Competitions.csv.zip" not in files:
-            api.dataset_download_file('Kaggle/meta-kaggle', 'Competitions.csv', path="./api/data")
-            with zipfile.ZipFile("./api/data/Competitions.csv.zip", 'r') as zip_ref:
-                zip_ref.extractall("./api/data")
-        if 'CompetitionTags.csv' not in files:
-            api.dataset_download_file('Kaggle/meta-kaggle', 'CompetitionTags.csv', path="./api/data")
+
+    zip_file_path = "./api/data/Competitions.csv.zip"
+    competition_file_path = "./api/data/Competitions.csv"
+    competition_tags_file_path = "./api/data/CompetitionTags.csv"
+
+    if os.path.exists(zip_file_path):
+        os.remove(zip_file_path)
+    if os.path.exists(competition_file_path):
+        os.remove(competition_file_path)
+    if os.path.exists(competition_tags_file_path):
+        os.remove(competition_tags_file_path)
+
+    api.dataset_download_file('Kaggle/meta-kaggle', 'Competitions.csv', path="./api/data")
+    with zipfile.ZipFile("./api/data/Competitions.csv.zip", 'r') as zip_ref:
+        zip_ref.extractall("./api/data")
+    api.dataset_download_file('Kaggle/meta-kaggle', 'CompetitionTags.csv', path="./api/data")
 
     df_competitions = pd.read_csv("./api/data/Competitions.csv")
     df_competitions_tags = pd.read_csv("./api/data/CompetitionTags.csv")

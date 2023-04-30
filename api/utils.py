@@ -16,7 +16,11 @@ def extract_competition_from_row(row):
 
     organization = None
     if str(row['OrganizationName']) != "nan":
+        Organization.objects.get_or_create(name=row['OrganizationName'])
         organization = Organization.objects.get(name=row['OrganizationName'])
+    Category.objects.get_or_create(name=row['HostSegmentTitle'])
+    EvaluationMetric.objects.get_or_create(name=row['EvaluationAlgorithmName'])
+    RewardType.objects.get_or_create(name=row['RewardType'])
 
     new_competition = Competition(kaggle_id=row['Id'],
                                   title=row['Title'],
