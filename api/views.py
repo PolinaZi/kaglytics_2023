@@ -1,16 +1,17 @@
+import logging
 import os
+from datetime import datetime
 
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import generics, status
 from rest_framework.decorators import permission_classes, api_view
 from rest_framework.response import Response
-from django.core.exceptions import ObjectDoesNotExist
 from rest_framework_simplejwt.views import TokenObtainPairView
-from pprint import pprint
 
-from api.serializers import SignUpSerializer, EmailVerifySerializer, SignInSerializer, CompetitionSerializer, \
-    CompetitionDtoSerializer
-from .models import User, VerifyCode
-from .services import api_competitions_to_df, active_competitions_to_dto_list, get_active_competitions
+from api.serializers import SignUpSerializer, EmailVerifySerializer, SignInSerializer, CompetitionDtoSerializer
+from .models import User, VerifyCode, Category, RewardType, Tag
+from .services import api_competitions_to_df, active_competitions_to_dto_list, get_active_competitions, \
+    get_filtered_active_competitions
 from .utils import Util, generate_code
 
 
@@ -43,6 +44,39 @@ class SignUpView(generics.GenericAPIView):
 def competitions_view(request):
     api_active_competitions = get_active_competitions()
     active_competitions_df = api_competitions_to_df(api_active_competitions)
+    active_competitions = active_competitions_to_dto_list(active_competitions_df)
+    serializer = CompetitionDtoSerializer(active_competitions, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+def competitions_search_view(request):
+    title = request.query_params.get('title')
+    category_str = request.query_params.get('category')
+    reward_type_str = request.query_params.get('reward_type')
+    deadline_before_str = request.query_params.get('deadline_before')
+    deadline_after_str = request.query_params.get('deadline_after')
+    tags_str = request.query_params.get('tags')
+
+    deadline_before = None
+    if deadline_before_str:
+        try:
+            deadline_before = datetime.strptime(deadline_before_str, '%Y-%m-%d')
+        except ValueError:
+            print(logging.INFO, 'Invalid deadline_before format. Expected format: YYYY-MM-DD.')
+    deadline_after = None
+    if deadline_after_str:
+        try:
+            deadline_after = datetime.strptime(deadline_after_str, '%Y-%m-%d')
+        except ValueError:
+            print(logging.INFO, 'Invalid deadline_after format. Expected format: YYYY-MM-DD.')
+    tags = tags_str.split(',')
+
+    api_filtered_competitions = get_filtered_active_competitions(title=title, category=category_str,
+                                                                 reward_type=reward_type_str,
+                                                                 deadline_before=deadline_before,
+                                                                 deadline_after=deadline_after, tags=tags)
+    active_competitions_df = api_competitions_to_df(api_filtered_competitions)
     active_competitions = active_competitions_to_dto_list(active_competitions_df)
     serializer = CompetitionDtoSerializer(active_competitions, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)

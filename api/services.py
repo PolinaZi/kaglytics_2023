@@ -20,9 +20,9 @@ def get_filtered_active_competitions(title=None, category=None, reward_type=None
     if title is not None:
         competitions = [c for c in competitions if title.lower() in c.title.lower()]
     if category is not None:
-        competitions = [c for c in competitions if category == c.category]
+        competitions = [c for c in competitions if category.lower() == c.category.lower()]
     if reward_type is not None:
-        competitions = [c for c in competitions if reward_type == c.reward]
+        competitions = [c for c in competitions if reward_type.lower() == c.reward.lower()]
     if deadline_before is not None:
         competitions = [c for c in competitions if deadline_before >= c.deadline]
     if deadline_after is not None:
