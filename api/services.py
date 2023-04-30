@@ -101,6 +101,5 @@ def api_competitions_to_df(competitions):
         active_df[tag] = tag_list
 
     active_df.drop(columns=['tags', 'reward'], inplace=True)
-    active_df.to_csv("./api/data/actives.csv", sep=',', encoding='utf-8', index=False)
     return active_df
 
