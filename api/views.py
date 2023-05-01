@@ -8,7 +8,8 @@ from rest_framework.decorators import permission_classes, api_view
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-from api.serializers import SignUpSerializer, EmailVerifySerializer, SignInSerializer, CompetitionDtoSerializer
+from api.serializers import SignUpSerializer, EmailVerifySerializer, SignInSerializer, CompetitionDtoSerializer, \
+    CategorySerializer, RewardTypeSerializer, TagSerializer
 from .models import User, VerifyCode, Category, RewardType, Tag
 from .services import api_competitions_to_df, active_competitions_to_dto_list, get_active_competitions, \
     get_filtered_active_competitions
@@ -79,6 +80,27 @@ def competitions_search_view(request):
     active_competitions_df = api_competitions_to_df(api_filtered_competitions)
     active_competitions = active_competitions_to_dto_list(active_competitions_df)
     serializer = CompetitionDtoSerializer(active_competitions, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+def competitions_categories_view(request):
+    available_competitions_categories = Category.objects.all()
+    serializer = CategorySerializer(available_competitions_categories, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+def competitions_reward_types_view(request):
+    available_competitions_reward_types = RewardType.objects.all()
+    serializer = RewardTypeSerializer(available_competitions_reward_types, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+def competitions_tags_view(request):
+    available_competitions_tags = Tag.objects.all()
+    serializer = TagSerializer(available_competitions_tags, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 

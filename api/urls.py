@@ -16,7 +16,8 @@ Including another URLconf
 from django.urls import path
 from rest_framework_simplejwt.views import TokenRefreshView
 
-from .views import SignUpView, competitions_view, EmailVerifyView, SignInView, competitions_search_view
+from .views import SignUpView, competitions_view, EmailVerifyView, SignInView, competitions_search_view, \
+    competitions_categories_view, competitions_reward_types_view, competitions_tags_view
 
 urlpatterns = [
     path('sign-up', SignUpView.as_view()),
@@ -24,5 +25,8 @@ urlpatterns = [
     path('refresh-token', TokenRefreshView.as_view()),
     path('competitions/active', competitions_view),
     path('competitions/active/search', competitions_search_view),
+    path('competitions/categories', competitions_categories_view),
+    path('competitions/reward-types', competitions_reward_types_view),
+    path('competitions/tags', competitions_tags_view),
     path('email-verify', EmailVerifyView.as_view()),
 ]
