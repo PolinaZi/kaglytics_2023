@@ -1,6 +1,8 @@
 import pandas as pd
 
-deleted_columns = ['Id', 'Slug', 'ForumId', 'CompetitionTypeId', 'TeamModelDeadlineDate', 'ModelSubmissionDeadlineDate',
+from api.models import Category, Organization, EvaluationMetric, RewardType
+
+DELETED_COLUMNS = ['Id', 'Slug', 'ForumId', 'CompetitionTypeId', 'TeamModelDeadlineDate', 'ModelSubmissionDeadlineDate',
                    'FinalLeaderboardHasBeenVerified', 'HasKernels', 'OnlyAllowKernelSubmissions', 'HasLeaderboard',
                    'LeaderboardPercentage', 'LeaderboardDisplayFormat', 'EvaluationAlgorithmAbbreviation',
                    'EvaluationAlgorithmDescription', 'EvaluationAlgorithmIsMax', 'NumScoredSubmissions',
@@ -8,14 +10,14 @@ deleted_columns = ['Id', 'Slug', 'ForumId', 'CompetitionTypeId', 'TeamModelDeadl
                    'ValidationSetName', 'ValidationSetValue', 'EnableSubmissionModelHashes',
                    'EnableSubmissionModelAttachments', 'HostName', 'TotalTeams', 'TotalSubmissions']
 
-renamed_columns = {'Subtitle': 'description', 'HostSegmentTitle': 'category', 'DeadlineDate': 'deadline',
+RENAMED_COLUMNS = {'Subtitle': 'description', 'HostSegmentTitle': 'category', 'DeadlineDate': 'deadline',
                    'ProhibitNewEntrantsDeadlineDate': 'newEntrantDeadline', 'TeamMergerDeadlineDate': 'mergerDeadline',
                    'EvaluationAlgorithmName': 'evaluationMetric'}
 
-cat_features = ['category', 'organizationname', 'evaluationmetric', 'rewardtype']
-text_features = ['title', 'description']
+CAT_FEATURES = ['category', 'organizationname', 'evaluationmetric', 'rewardtype']
+TEXT_FEATURES = ['title', 'description']
 
-datetime_format = '%m/%d/%Y %H:%M:%S'
+DATETIME_FORMAT = '%m/%d/%Y %H:%M:%S'
 
 
 def fill_string_na(df, features):
@@ -32,16 +34,16 @@ def create_new_features(df):
 
 
 def preprocess_data(df):
-    df.drop(columns=deleted_columns, inplace=True)
+    df.drop(columns=DELETED_COLUMNS, inplace=True)
 
-    df.rename(columns=renamed_columns, inplace=True)
+    df.rename(columns=RENAMED_COLUMNS, inplace=True)
 
     df.columns = map(str.lower, df.columns)
 
-    df['enableddate'] = pd.to_datetime(df['enableddate'], format=datetime_format)
-    df['deadline'] = pd.to_datetime(df['deadline'], format=datetime_format)
-    df['newentrantdeadline'] = pd.to_datetime(df['newentrantdeadline'], format=datetime_format)
-    df['mergerdeadline'] = pd.to_datetime(df['mergerdeadline'], format=datetime_format)
+    df['enableddate'] = pd.to_datetime(df['enableddate'], format=DATETIME_FORMAT)
+    df['deadline'] = pd.to_datetime(df['deadline'], format=DATETIME_FORMAT)
+    df['newentrantdeadline'] = pd.to_datetime(df['newentrantdeadline'], format=DATETIME_FORMAT)
+    df['mergerdeadline'] = pd.to_datetime(df['mergerdeadline'], format=DATETIME_FORMAT)
 
     create_new_features(df)
 
@@ -50,10 +52,35 @@ def preprocess_data(df):
 
     df['rewardquantity'].fillna(0, inplace=True)
 
-    fill_string_na(df, cat_features)
-    fill_string_na(df, text_features)
+    fill_string_na(df, CAT_FEATURES)
+    fill_string_na(df, TEXT_FEATURES)
+    df.replace('nan', '', inplace=True)
 
     x = df.drop(['totalcompetitors'], axis=1)
     y = df['totalcompetitors']
 
     return x, y
+
+
+def replace_non_existent_categories(df, row, names):
+    if str(row) not in names:
+        df.replace(row, '', inplace=True)
+
+
+def preprocess_active_competitions(df):
+    create_new_features(df)
+
+    df['day_to_new'].fillna(df.mode()['day_to_new'][0], inplace=True)
+    df['day_to_team'].fillna(df.mode()['day_to_team'][0], inplace=True)
+
+    categories_names = map(lambda x: x.name, Category.objects.all())
+    organization_names = map(lambda x: x.name, Organization.objects.all())
+    evaluation_metric_names = map(lambda x: x.name, EvaluationMetric.objects.all())
+    reward_type_names = map(lambda x: x.name, RewardType.objects.all())
+
+    for index, row in df.iterrows():
+
+        replace_non_existent_categories(df, row['category'], categories_names)
+        replace_non_existent_categories(df, row['organizationname'], organization_names)
+        replace_non_existent_categories(df, row['evaluationmetric'], evaluation_metric_names)
+        replace_non_existent_categories(df, row['rewardtype'], reward_type_names)
