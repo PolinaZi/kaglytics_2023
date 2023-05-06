@@ -52,6 +52,7 @@ def preprocess_data(df):
 
     fill_string_na(df, CAT_FEATURES)
     fill_string_na(df, TEXT_FEATURES)
+    df.replace('nan', '', inplace=True)
 
     x = df.drop(['totalcompetitors'], axis=1)
     y = df['totalcompetitors']

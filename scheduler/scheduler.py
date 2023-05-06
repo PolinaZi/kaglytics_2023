@@ -8,7 +8,6 @@ import numpy as np
 import pandas as pd
 from apscheduler.schedulers.background import BackgroundScheduler
 from django_apscheduler.jobstores import DjangoJobStore, register_events
-from sklearn.metrics import mean_absolute_error, r2_score, mean_squared_error
 
 from api.kaggle_api import api
 from api.models import Competition, Tag
