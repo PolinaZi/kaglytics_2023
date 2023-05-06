@@ -95,7 +95,7 @@ def update_competitions_info_table():
 def fit_model_with_new_data():
     print("Start fitting model with new data...")
 
-    model = get_model()
+    model = get_model(cat_features=CAT_FEATURES, text_features=TEXT_FEATURES)
     data = pd.read_csv("api/data/out.csv", low_memory=False)
     x, y = preprocess_data(data)
     train_pool, validation_pool = create_pools(x, y, 0.25, CAT_FEATURES, TEXT_FEATURES)
