@@ -1,6 +1,6 @@
 import pandas as pd
 
-deleted_columns = ['Id', 'Slug', 'ForumId', 'CompetitionTypeId', 'TeamModelDeadlineDate', 'ModelSubmissionDeadlineDate',
+DELETED_COLUMNS = ['Id', 'Slug', 'ForumId', 'CompetitionTypeId', 'TeamModelDeadlineDate', 'ModelSubmissionDeadlineDate',
                    'FinalLeaderboardHasBeenVerified', 'HasKernels', 'OnlyAllowKernelSubmissions', 'HasLeaderboard',
                    'LeaderboardPercentage', 'LeaderboardDisplayFormat', 'EvaluationAlgorithmAbbreviation',
                    'EvaluationAlgorithmDescription', 'EvaluationAlgorithmIsMax', 'NumScoredSubmissions',
@@ -8,14 +8,14 @@ deleted_columns = ['Id', 'Slug', 'ForumId', 'CompetitionTypeId', 'TeamModelDeadl
                    'ValidationSetName', 'ValidationSetValue', 'EnableSubmissionModelHashes',
                    'EnableSubmissionModelAttachments', 'HostName', 'TotalTeams', 'TotalSubmissions']
 
-renamed_columns = {'Subtitle': 'description', 'HostSegmentTitle': 'category', 'DeadlineDate': 'deadline',
+RENAMED_COLUMNS = {'Subtitle': 'description', 'HostSegmentTitle': 'category', 'DeadlineDate': 'deadline',
                    'ProhibitNewEntrantsDeadlineDate': 'newEntrantDeadline', 'TeamMergerDeadlineDate': 'mergerDeadline',
                    'EvaluationAlgorithmName': 'evaluationMetric'}
 
-cat_features = ['category', 'organizationname', 'evaluationmetric', 'rewardtype']
-text_features = ['title', 'description']
+CAT_FEATURES = ['category', 'organizationname', 'evaluationmetric', 'rewardtype']
+TEXT_FEATURES = ['title', 'description']
 
-datetime_format = '%m/%d/%Y %H:%M:%S'
+DATETIME_FORMAT = '%m/%d/%Y %H:%M:%S'
 
 
 def fill_string_na(df, features):
@@ -32,16 +32,16 @@ def create_new_features(df):
 
 
 def preprocess_data(df):
-    df.drop(columns=deleted_columns, inplace=True)
+    df.drop(columns=DELETED_COLUMNS, inplace=True)
 
-    df.rename(columns=renamed_columns, inplace=True)
+    df.rename(columns=RENAMED_COLUMNS, inplace=True)
 
     df.columns = map(str.lower, df.columns)
 
-    df['enableddate'] = pd.to_datetime(df['enableddate'], format=datetime_format)
-    df['deadline'] = pd.to_datetime(df['deadline'], format=datetime_format)
-    df['newentrantdeadline'] = pd.to_datetime(df['newentrantdeadline'], format=datetime_format)
-    df['mergerdeadline'] = pd.to_datetime(df['mergerdeadline'], format=datetime_format)
+    df['enableddate'] = pd.to_datetime(df['enableddate'], format=DATETIME_FORMAT)
+    df['deadline'] = pd.to_datetime(df['deadline'], format=DATETIME_FORMAT)
+    df['newentrantdeadline'] = pd.to_datetime(df['newentrantdeadline'], format=DATETIME_FORMAT)
+    df['mergerdeadline'] = pd.to_datetime(df['mergerdeadline'], format=DATETIME_FORMAT)
 
     create_new_features(df)
 
@@ -50,8 +50,8 @@ def preprocess_data(df):
 
     df['rewardquantity'].fillna(0, inplace=True)
 
-    fill_string_na(df, cat_features)
-    fill_string_na(df, text_features)
+    fill_string_na(df, CAT_FEATURES)
+    fill_string_na(df, TEXT_FEATURES)
 
     x = df.drop(['totalcompetitors'], axis=1)
     y = df['totalcompetitors']

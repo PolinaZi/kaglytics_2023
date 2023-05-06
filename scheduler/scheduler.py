@@ -13,8 +13,8 @@ from sklearn.metrics import mean_absolute_error, r2_score, mean_squared_error
 from api.kaggle_api import api
 from api.models import Competition, Tag
 from api.utils import extract_competition_from_row
-from api.data_preprocessing import preprocess_data, cat_features, text_features
-from api.prediction_model import create_pools, fit_model, fitted_model_filename, get_model
+from api.data_preprocessing import preprocess_data, CAT_FEATURES, TEXT_FEATURES
+from api.prediction_model import create_pools, fit_model, FITTED_MODEL_FILENAME, get_model
 
 
 def update_competitions_info_file():
@@ -98,10 +98,10 @@ def fit_model_with_new_data():
     model = get_model()
     data = pd.read_csv("api/data/out.csv", low_memory=False)
     x, y = preprocess_data(data)
-    train_pool, validation_pool = create_pools(x, y, 0.25, cat_features, text_features)
+    train_pool, validation_pool = create_pools(x, y, 0.25, CAT_FEATURES, TEXT_FEATURES)
     fit_model(model, train_pool, validation_pool)
 
-    joblib.dump(model, f"./api/models/{fitted_model_filename}")
+    joblib.dump(model, f"./api/models/{FITTED_MODEL_FILENAME}")
     print("Model was fitted successfully.")
 
 

@@ -2,7 +2,7 @@ from catboost import Pool
 from catboost import CatBoostRegressor
 from sklearn.model_selection import train_test_split
 
-fitted_model_filename = 'fitted_model.sav'
+FITTED_MODEL_FILENAME = 'fitted_model.sav'
 
 
 def split_data(x, y, test_size):
