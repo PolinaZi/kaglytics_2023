@@ -1,5 +1,7 @@
 import pandas as pd
 
+from api.models import Category, Organization, EvaluationMetric, RewardType
+
 DELETED_COLUMNS = ['Id', 'Slug', 'ForumId', 'CompetitionTypeId', 'TeamModelDeadlineDate', 'ModelSubmissionDeadlineDate',
                    'FinalLeaderboardHasBeenVerified', 'HasKernels', 'OnlyAllowKernelSubmissions', 'HasLeaderboard',
                    'LeaderboardPercentage', 'LeaderboardDisplayFormat', 'EvaluationAlgorithmAbbreviation',
@@ -58,3 +60,27 @@ def preprocess_data(df):
     y = df['totalcompetitors']
 
     return x, y
+
+
+def replace_non_existent_categories(df, row, names):
+    if str(row) not in names:
+        df.replace(row, '', inplace=True)
+
+
+def preprocess_active_competitions(df):
+    create_new_features(df)
+
+    df['day_to_new'].fillna(df.mode()['day_to_new'][0], inplace=True)
+    df['day_to_team'].fillna(df.mode()['day_to_team'][0], inplace=True)
+
+    categories_names = map(lambda x: x.name, Category.objects.all())
+    organization_names = map(lambda x: x.name, Organization.objects.all())
+    evaluation_metric_names = map(lambda x: x.name, EvaluationMetric.objects.all())
+    reward_type_names = map(lambda x: x.name, RewardType.objects.all())
+
+    for index, row in df.iterrows():
+
+        replace_non_existent_categories(df, row['category'], categories_names)
+        replace_non_existent_categories(df, row['organizationname'], organization_names)
+        replace_non_existent_categories(df, row['evaluationmetric'], evaluation_metric_names)
+        replace_non_existent_categories(df, row['rewardtype'], reward_type_names)
