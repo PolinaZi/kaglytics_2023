@@ -38,7 +38,7 @@ def active_competitions_to_dto_list(df_competitions):
     competitions = []
 
     tag_names = list(df_competitions.columns.values)
-    tag_names = tag_names[42:]
+    tag_names = tag_names[14:]
 
     for index, row in df_competitions.iterrows():
         new_competition_dto = extract_active_competition_from_row(row).to_dto()
@@ -64,8 +64,9 @@ def api_competitions_to_df(competitions):
     for c in api_competitions:
         comp_list.append(vars(c))
 
-    feature_names = ['category', 'deadline', 'description', 'enabledDate', 'evaluationMetric', 'maxDailySubmissions',
-                     'maxTeamSize', 'organizationName', 'reward', 'tags', 'title', 'id']
+    feature_names = ['title', 'description', 'category', 'organizationname', 'evaluationmetric', 'maxdailysubmissions',
+                     'maxteamsize', 'reward', 'deadline', 'enabledDate', 'tags', 'id', 'mergerDeadline',
+                     'newEntrantDeadline']
 
     active_df = pd.DataFrame(comp_list, columns=feature_names)
     active_df.columns = map(str.lower, active_df.columns)
@@ -88,8 +89,8 @@ def api_competitions_to_df(competitions):
             reward_type.append(row['reward'])
             reward_quantity.append(0)
 
-    active_df['rewardtype'] = reward_type
-    active_df['rewardquantity'] = reward_quantity
+    active_df.insert(loc=7, column='rewardtype', value=reward_type)
+    active_df.insert(loc=8, column='rewardquantity', value=reward_quantity)
 
     tags_names = map(lambda t: t.name, Tag.objects.all())
 
