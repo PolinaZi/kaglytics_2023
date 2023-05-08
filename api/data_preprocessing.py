@@ -14,6 +14,8 @@ RENAMED_COLUMNS = {'Subtitle': 'description', 'HostSegmentTitle': 'category', 'D
                    'ProhibitNewEntrantsDeadlineDate': 'newEntrantDeadline', 'TeamMergerDeadlineDate': 'mergerDeadline',
                    'EvaluationAlgorithmName': 'evaluationMetric'}
 
+DATE_COLUMNS = ['deadline', 'newentrantdeadline', 'mergerdeadline', 'enableddate']
+
 CAT_FEATURES = ['category', 'organizationname', 'evaluationmetric', 'rewardtype']
 TEXT_FEATURES = ['title', 'description']
 
@@ -40,10 +42,8 @@ def preprocess_data(df):
 
     df.columns = map(str.lower, df.columns)
 
-    df['enableddate'] = pd.to_datetime(df['enableddate'], format=DATETIME_FORMAT)
-    df['deadline'] = pd.to_datetime(df['deadline'], format=DATETIME_FORMAT)
-    df['newentrantdeadline'] = pd.to_datetime(df['newentrantdeadline'], format=DATETIME_FORMAT)
-    df['mergerdeadline'] = pd.to_datetime(df['mergerdeadline'], format=DATETIME_FORMAT)
+    for column in DATE_COLUMNS:
+        df[column] = pd.to_datetime(df[column], format=DATETIME_FORMAT)
 
     create_new_features(df)
 
@@ -68,6 +68,10 @@ def replace_non_existent_categories(df, row, names):
 
 
 def preprocess_active_competitions(df):
+
+    for column in DATE_COLUMNS:
+        df[column].fillna(df['deadline'], inplace=True)
+
     create_new_features(df)
 
     df['day_to_new'].fillna(df.mode()['day_to_new'][0], inplace=True)
