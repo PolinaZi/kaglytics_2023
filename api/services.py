@@ -1,11 +1,13 @@
 import re
-
 import pandas as pd
+import joblib
 
 from api.kaggle_api import api
 from .dto import TagDto
 from .models import Tag
 from .utils import extract_active_competition_from_row
+from .data_preprocessing import preprocess_active_competitions
+from .prediction_model import FITTED_MODEL_FILENAME
 
 
 def get_active_competitions():
@@ -40,8 +42,11 @@ def active_competitions_to_dto_list(df_competitions):
     tag_names = list(df_competitions.columns.values)
     tag_names = tag_names[14:]
 
+    predictions = get_total_competitors_prediction(df_competitions)
+
     for index, row in df_competitions.iterrows():
         new_competition_dto = extract_active_competition_from_row(row).to_dto()
+        new_competition_dto.set_prediction(predictions[index])
 
         competition_tags = list()
         for tag in tag_names:
@@ -58,6 +63,15 @@ def active_competitions_to_dto_list(df_competitions):
     return competitions
 
 
+def get_total_competitors_prediction(df_competitions):
+    df = df_competitions.copy()
+    preprocess_active_competitions(df)
+    model = joblib.load(f"api/models/{FITTED_MODEL_FILENAME}")
+    predictions = model.predict(df)
+    predictions = [int(x) for x in predictions]
+    return predictions
+
+
 def api_competitions_to_df(competitions):
     api_competitions = competitions
     comp_list = []
@@ -65,11 +79,12 @@ def api_competitions_to_df(competitions):
         comp_list.append(vars(c))
 
     feature_names = ['title', 'description', 'category', 'organizationname', 'evaluationmetric', 'maxdailysubmissions',
-                     'maxteamsize', 'reward', 'deadline', 'enabledDate', 'tags', 'id', 'mergerDeadline',
-                     'newEntrantDeadline']
+                     'maxteamsize', 'reward', 'deadline', 'enableddate', 'tags', 'id', 'mergerdeadline',
+                     'newentrantdeadline']
 
-    active_df = pd.DataFrame(comp_list, columns=feature_names)
+    active_df = pd.DataFrame(comp_list)
     active_df.columns = map(str.lower, active_df.columns)
+    active_df = pd.DataFrame(active_df, columns=feature_names)
 
     reward_type = []
     reward_quantity = []

@@ -40,6 +40,7 @@ class CompetitionDto:
                  max_daily_submissions: int, max_team_size: int, reward_type_dto: RewardTypeDto, reward_quantity: int,
                  total_teams: int, total_competitors: int, total_submissions: int, enabled_date: datetime,
                  deadline: datetime, tags_dto: List[TagDto]):
+        self.prediction = 0
         self.sid = sid
         self.kaggle_id = kaggle_id
         self.title = title
@@ -57,4 +58,7 @@ class CompetitionDto:
         self.enabled_date = enabled_date
         self.deadline = deadline
         self.tags_dto = tags_dto
+
+    def set_prediction(self, prediction):
+        self.prediction = prediction
 

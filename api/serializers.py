@@ -135,6 +135,7 @@ class CompetitionDtoSerializer(serializers.Serializer):
     total_submissions = serializers.IntegerField()
     enabled_date = serializers.DateTimeField()
     deadline = serializers.DateTimeField()
+    prediction = serializers.IntegerField()
     tags_dto = TagDtoSerializer(many=True)
 
 
