@@ -43,7 +43,7 @@ def get_filtered_active_competitions(title=None, categories=None, reward_types=N
 
 def contains_string(checking_str, arr):
     for string in arr:
-        if string == checking_str:
+        if string.lower() == checking_str.lower():
             return True
     return False
 
