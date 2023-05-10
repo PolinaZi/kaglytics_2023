@@ -72,9 +72,11 @@ def competitions_search_view(request):
         except ValueError:
             print(logging.INFO, 'Invalid deadline_after format. Expected format: YYYY-MM-DD.')
     tags = tags_str.split(',')
+    reward_types = reward_type_str.split(',')
+    categories = category_str.split(',')
 
-    api_filtered_competitions = get_filtered_active_competitions(title=title, category=category_str,
-                                                                 reward_type=reward_type_str,
+    api_filtered_competitions = get_filtered_active_competitions(title=title, categories=categories,
+                                                                 reward_types=reward_types,
                                                                  deadline_before=deadline_before,
                                                                  deadline_after=deadline_after, tags=tags)
     active_competitions_df = api_competitions_to_df(api_filtered_competitions)
