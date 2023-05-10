@@ -71,16 +71,27 @@ def competitions_search_view(request):
             deadline_after = datetime.strptime(deadline_after_str, '%Y-%m-%d')
         except ValueError:
             print(logging.INFO, 'Invalid deadline_after format. Expected format: YYYY-MM-DD.')
-    tags = tags_str.split(',')
+    tags = None
+    if tags_str:
+        tags = tags_str.split(',')
+    reward_types = None
+    if reward_type_str:
+        reward_types = reward_type_str.split(',')
+    categories = None
+    if category_str:
+        categories = category_str.split(',')
 
-    api_filtered_competitions = get_filtered_active_competitions(title=title, category=category_str,
-                                                                 reward_type=reward_type_str,
+    api_filtered_competitions = get_filtered_active_competitions(title=title, categories=categories,
+                                                                 reward_types=reward_types,
                                                                  deadline_before=deadline_before,
                                                                  deadline_after=deadline_after, tags=tags)
-    active_competitions_df = api_competitions_to_df(api_filtered_competitions)
-    active_competitions = active_competitions_to_dto_list(active_competitions_df)
-    serializer = CompetitionDtoSerializer(active_competitions, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    if len(api_filtered_competitions) > 0:
+        active_competitions_df = api_competitions_to_df(api_filtered_competitions)
+        active_competitions = active_competitions_to_dto_list(active_competitions_df)
+        serializer = CompetitionDtoSerializer(active_competitions, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    else:
+        return Response(None, status=status.HTTP_200_OK)
 
 
 @api_view(["GET"])

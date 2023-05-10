@@ -15,25 +15,37 @@ def get_active_competitions():
     return api_competitions
 
 
-def get_filtered_active_competitions(title=None, category=None, reward_type=None, deadline_before=None,
+def get_filtered_active_competitions(title=None, categories=None, reward_types=None, deadline_before=None,
                                      deadline_after=None, tags=None):
     competitions = api.competitions_list()
 
     if title is not None:
         competitions = [c for c in competitions if title.lower() in c.title.lower()]
-    if category is not None:
-        competitions = [c for c in competitions if category.lower() == c.category.lower()]
-    if reward_type is not None:
-        competitions = [c for c in competitions if reward_type.lower() == c.reward.lower()]
+
+    if categories is not None:
+        competitions = [c for c in competitions if contains_string(c.category.lower(), categories)]
+
+    if reward_types is not None:
+        competitions = [c for c in competitions if contains_string(c.reward.lower(), reward_types)]
+
     if deadline_before is not None:
         competitions = [c for c in competitions if deadline_before >= c.deadline]
+
     if deadline_after is not None:
         competitions = [c for c in competitions if deadline_after <= c.deadline]
+
     if tags is not None:
         competitions = [c for c in competitions if
                         all(tag.lower() in map(lambda t: t.name.lower(), c.tags) for tag in tags)]
 
     return competitions
+
+
+def contains_string(checking_str, arr):
+    for string in arr:
+        if string.lower() == checking_str.lower():
+            return True
+    return False
 
 
 def active_competitions_to_dto_list(df_competitions):
