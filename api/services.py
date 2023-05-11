@@ -1,4 +1,6 @@
 import re
+from pprint import pprint
+
 import pandas as pd
 import joblib
 
@@ -23,10 +25,10 @@ def get_filtered_active_competitions(title=None, categories=None, reward_types=N
         competitions = [c for c in competitions if title.lower() in c.title.lower()]
 
     if categories is not None:
-        competitions = [c for c in competitions if contains_string(c.category.lower(), categories)]
+        competitions = [c for c in competitions if contains_category(c.category.lower(), categories)]
 
     if reward_types is not None:
-        competitions = [c for c in competitions if contains_string(c.reward.lower(), reward_types)]
+        competitions = [c for c in competitions if contains_reward_type(c.reward.lower(), reward_types)]
 
     if deadline_before is not None:
         competitions = [c for c in competitions if deadline_before >= c.deadline]
@@ -41,9 +43,20 @@ def get_filtered_active_competitions(title=None, categories=None, reward_types=N
     return competitions
 
 
-def contains_string(checking_str, arr):
-    for string in arr:
-        if string.lower() == checking_str.lower():
+def contains_category(category, categories):
+    for c in categories:
+        if c.lower() == category.lower():
+            return True
+    return False
+
+
+def contains_reward_type(reward_type, reward_types):
+    for rt in reward_types:
+        if rt.lower() == reward_type.lower():
+            return True
+        if rt.lower() == "usd" and reward_type.lower().startswith("$"):
+            return True
+        if rt.lower() == "eur" and reward_type.lower().startswith("€"):
             return True
     return False
 

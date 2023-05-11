@@ -53,8 +53,8 @@ def competitions_view(request):
 @api_view(["GET"])
 def competitions_search_view(request):
     title = request.query_params.get('title')
-    category_str = request.query_params.get('category')
-    reward_type_str = request.query_params.get('reward_type')
+    category_str = request.query_params.get('categories')
+    reward_type_str = request.query_params.get('reward_types')
     deadline_before_str = request.query_params.get('deadline_before')
     deadline_after_str = request.query_params.get('deadline_after')
     tags_str = request.query_params.get('tags')
