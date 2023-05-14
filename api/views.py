@@ -59,6 +59,9 @@ def competitions_search_view(request):
     deadline_after_str = request.query_params.get('deadline_after')
     tags_str = request.query_params.get('tags')
 
+    if title.lower() == "null":
+        title = None
+
     deadline_before = None
     if deadline_before_str:
         try:
@@ -74,12 +77,18 @@ def competitions_search_view(request):
     tags = None
     if tags_str:
         tags = tags_str.split(',')
+        if tags[0].lower() == "null":
+            tags = None
     reward_types = None
     if reward_type_str:
         reward_types = reward_type_str.split(',')
+        if reward_types[0].lower() == "null":
+            reward_types = None
     categories = None
     if category_str:
         categories = category_str.split(',')
+        if categories[0].lower() == "null":
+            categories = None
 
     api_filtered_competitions = get_filtered_active_competitions(title=title, categories=categories,
                                                                  reward_types=reward_types,
