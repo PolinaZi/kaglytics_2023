@@ -103,15 +103,15 @@ class Competition(models.Model):
     description = models.TextField(null=True)
     category = models.ForeignKey(Category, null=True, on_delete=models.SET_NULL)
     organization = models.ForeignKey(Organization, null=True, on_delete=models.SET_NULL)
-    evaluationMetric = models.ForeignKey(EvaluationMetric, null=True, on_delete=models.SET_NULL)
-    maxDailySubmissions = models.IntegerField(verbose_name='Цена')
-    maxTeamSize = models.IntegerField(verbose_name='Цена')
-    rewardType = models.ForeignKey(RewardType, null=True, on_delete=models.SET_NULL)
-    rewardQuantity = models.IntegerField(default=0)
-    totalTeams = models.IntegerField()
-    totalCompetitors = models.IntegerField(null=True, blank=True)
-    totalSubmissions = models.IntegerField(null=True, blank=True)
-    enabledDate = models.DateTimeField()
+    evaluation_metric = models.ForeignKey(EvaluationMetric, null=True, on_delete=models.SET_NULL)
+    max_daily_submissions = models.IntegerField(verbose_name='Цена')
+    max_team_size = models.IntegerField(verbose_name='Цена')
+    reward_type = models.ForeignKey(RewardType, null=True, on_delete=models.SET_NULL)
+    reward_quantity = models.IntegerField(default=0)
+    total_teams = models.IntegerField()
+    total_competitors = models.IntegerField(null=True, blank=True)
+    total_submissions = models.IntegerField(null=True, blank=True)
+    enabled_date = models.DateTimeField()
     deadline = models.DateTimeField()
     tags = models.ManyToManyField(Tag)
 
@@ -123,15 +123,15 @@ class Competition(models.Model):
             description=self.description,
             category_dto=Category.to_dto(self.category),
             organization_dto=Organization.to_dto(self.organization),
-            evaluation_metric_dto=EvaluationMetric.to_dto(self.evaluationMetric),
-            max_daily_submissions=self.maxDailySubmissions,
-            max_team_size=self.maxTeamSize,
-            reward_type_dto=RewardType.to_dto(self.rewardType),
-            reward_quantity=self.rewardQuantity,
-            total_teams=self.totalTeams,
-            total_competitors=self.totalCompetitors,
-            total_submissions=self.totalSubmissions,
-            enabled_date=self.enabledDate,
+            evaluation_metric_dto=EvaluationMetric.to_dto(self.evaluation_metric),
+            max_daily_submissions=self.max_daily_submissions,
+            max_team_size=self.max_team_size,
+            reward_type_dto=RewardType.to_dto(self.reward_type),
+            reward_quantity=self.reward_quantity,
+            total_teams=self.total_teams,
+            total_competitors=self.total_competitors,
+            total_submissions=self.total_submissions,
+            enabled_date=self.enabled_date,
             deadline=self.deadline,
             tags_dto=list()
         )

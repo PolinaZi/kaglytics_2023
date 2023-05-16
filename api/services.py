@@ -1,15 +1,54 @@
 import re
-from pprint import pprint
-
 import pandas as pd
+import collections
 import joblib
 
 from api.kaggle_api import api
 from .dto import TagDto
-from .models import Tag
+from .models import Tag, Category, Competition, Organization, RewardType
 from .utils import extract_active_competition_from_row
 from .data_preprocessing import preprocess_active_competitions
 from .prediction_model import FITTED_MODEL_FILENAME
+
+
+def get_competitions_categories_stats():
+    categories = Category.objects.all()
+    dictionary = {}
+
+    for category in categories:
+        dictionary[category.name] = len(Competition.objects.filter(category=category))
+
+    return dictionary
+
+
+def get_competitions_organizations_stats():
+    organizations = Organization.objects.all()
+    counter = collections.Counter()
+
+    for organization in organizations:
+        counter[organization.name] = len(Competition.objects.filter(organization=organization))
+
+    return dict(counter.most_common(10))
+
+
+def get_competitions_reward_type_stats():
+    reward_types = RewardType.objects.all()
+    dictionary = {}
+
+    for reward_type in reward_types:
+        dictionary[reward_type.name] = len(Competition.objects.filter(reward_type=reward_type))
+
+    return dictionary
+
+
+def get_competitions_tags_stats():
+    tags = Tag.objects.all()
+    counter = collections.Counter()
+
+    for tag in tags:
+        counter[tag.name] = len(Competition.objects.filter(tags__id=tag.id))
+
+    return dict(counter.most_common(10))
 
 
 def get_active_competitions():
@@ -143,4 +182,3 @@ def api_competitions_to_df(competitions):
 
     active_df.drop(columns=['tags', 'reward'], inplace=True)
     return active_df
-

@@ -17,7 +17,9 @@ from django.urls import path
 from rest_framework_simplejwt.views import TokenRefreshView
 
 from .views import SignUpView, competitions_view, EmailVerifyView, SignInView, competitions_search_view, \
-    competitions_categories_view, competitions_reward_types_view, competitions_tags_view
+    competitions_categories_view, competitions_reward_types_view, competitions_tags_view, \
+    competitions_categories_stat_view, competitions_organizations_stat_view, competitions_reward_type_stat_view, \
+    competitions_tags_stat_view
 
 urlpatterns = [
     path('sign-up', SignUpView.as_view()),
@@ -29,4 +31,8 @@ urlpatterns = [
     path('competitions/reward-types', competitions_reward_types_view),
     path('competitions/tags', competitions_tags_view),
     path('email-verify', EmailVerifyView.as_view()),
+    path('competitions/statistics/categories', competitions_categories_stat_view),
+    path('competitions/statistics/organizations', competitions_organizations_stat_view),
+    path('competitions/statistics/rewardtypes', competitions_reward_type_stat_view),
+    path('competitions/statistics/tags', competitions_tags_stat_view)
 ]
