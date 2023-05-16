@@ -12,7 +12,7 @@ from api.serializers import SignUpSerializer, EmailVerifySerializer, SignInSeria
     CategorySerializer, RewardTypeSerializer, TagSerializer
 from .models import User, VerifyCode, Category, RewardType, Tag
 from .services import api_competitions_to_df, active_competitions_to_dto_list, get_active_competitions, \
-    get_filtered_active_competitions
+    get_filtered_active_competitions, get_competitions_categories_stats
 from .utils import Util, generate_code
 
 
@@ -39,6 +39,12 @@ class SignUpView(generics.GenericAPIView):
 
         Util.send_email(data)
         return Response(user_data, status=status.HTTP_201_CREATED)
+
+
+@api_view(["GET"])
+def competitions_categories_stat_view(request):
+    dictionary = get_competitions_categories_stats()
+    return Response(dictionary, status=status.HTTP_200_OK)
 
 
 @api_view(["GET"])

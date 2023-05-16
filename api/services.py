@@ -1,15 +1,24 @@
 import re
-from pprint import pprint
-
 import pandas as pd
+import collections
 import joblib
 
 from api.kaggle_api import api
 from .dto import TagDto
-from .models import Tag
+from .models import Tag, Category, Competition, Organization, RewardType
 from .utils import extract_active_competition_from_row
 from .data_preprocessing import preprocess_active_competitions
 from .prediction_model import FITTED_MODEL_FILENAME
+
+
+def get_competitions_categories_stats():
+    categories = Category.objects.all()
+    dictionary = {}
+
+    for category in categories:
+        dictionary[category.name] = len(Competition.objects.filter(category=category))
+
+    return dictionary
 
 
 def get_active_competitions():
@@ -143,4 +152,3 @@ def api_competitions_to_df(competitions):
 
     active_df.drop(columns=['tags', 'reward'], inplace=True)
     return active_df
-
