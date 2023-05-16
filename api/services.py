@@ -21,6 +21,16 @@ def get_competitions_categories_stats():
     return dictionary
 
 
+def get_competitions_organizations_stats():
+    organizations = Organization.objects.all()
+    counter = collections.Counter()
+
+    for organization in organizations:
+        counter[organization.name] = len(Competition.objects.filter(organization=organization))
+
+    return dict(counter.most_common(5))
+
+
 def get_active_competitions():
     api_competitions = api.competitions_list()
     return api_competitions
