@@ -28,7 +28,7 @@ def get_competitions_organizations_stats():
     for organization in organizations:
         counter[organization.name] = len(Competition.objects.filter(organization=organization))
 
-    return dict(counter.most_common(5))
+    return dict(counter.most_common(10))
 
 
 def get_competitions_reward_type_stats():
@@ -39,6 +39,16 @@ def get_competitions_reward_type_stats():
         dictionary[reward_type.name] = len(Competition.objects.filter(reward_type=reward_type))
 
     return dictionary
+
+
+def get_competitions_tags_stats():
+    tags = Tag.objects.all()
+    counter = collections.Counter()
+
+    for tag in tags:
+        counter[tag.name] = len(Competition.objects.filter(tags__id=tag.id))
+
+    return dict(counter.most_common(10))
 
 
 def get_active_competitions():

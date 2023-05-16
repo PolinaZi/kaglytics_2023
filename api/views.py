@@ -13,7 +13,7 @@ from api.serializers import SignUpSerializer, EmailVerifySerializer, SignInSeria
 from .models import User, VerifyCode, Category, RewardType, Tag
 from .services import api_competitions_to_df, active_competitions_to_dto_list, get_active_competitions, \
     get_filtered_active_competitions, get_competitions_categories_stats, get_competitions_organizations_stats, \
-    get_competitions_reward_type_stats
+    get_competitions_reward_type_stats, get_competitions_tags_stats
 from .utils import Util, generate_code
 
 
@@ -57,6 +57,12 @@ def competitions_organizations_stat_view(request):
 @api_view(["GET"])
 def competitions_reward_type_stat_view(request):
     dictionary = get_competitions_reward_type_stats()
+    return Response(dictionary, status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+def competitions_tags_stat_view(request):
+    dictionary = get_competitions_tags_stats()
     return Response(dictionary, status=status.HTTP_200_OK)
 
 
