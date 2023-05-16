@@ -31,6 +31,16 @@ def get_competitions_organizations_stats():
     return dict(counter.most_common(5))
 
 
+def get_competitions_reward_type_stats():
+    reward_types = RewardType.objects.all()
+    dictionary = {}
+
+    for reward_type in reward_types:
+        dictionary[reward_type.name] = len(Competition.objects.filter(reward_type=reward_type))
+
+    return dictionary
+
+
 def get_active_competitions():
     api_competitions = api.competitions_list()
     return api_competitions
