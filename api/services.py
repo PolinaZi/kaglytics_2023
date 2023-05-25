@@ -36,7 +36,7 @@ def get_competitions_reward_type_stats():
     dictionary = {}
 
     for reward_type in reward_types:
-        dictionary[reward_type.name] = len(Competition.objects.filter(reward_type=reward_type))
+        dictionary[reward_type.name] = len(Competition.objects.filter(rewardType=reward_type))
 
     return dictionary
 
