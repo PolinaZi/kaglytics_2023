@@ -1,5 +1,6 @@
-from rest_framework import serializers, exceptions
+from rest_framework import serializers, exceptions, status
 from rest_framework_simplejwt.serializers import TokenObtainSerializer
+from rest_framework.response import Response
 
 from .models import User
 from api.models import Category, Organization, EvaluationMetric, RewardType, Tag, Competition
@@ -155,9 +156,9 @@ class SignInSerializer(TokenObtainSerializer):
         user = User.objects.filter(email=email).first()
 
         if (user is None) or (not user.check_password(password)):
-            raise exceptions.AuthenticationFailed({'error': 'Invalid email or password'})
+            raise serializers.ValidationError()
 
         if not user.is_verified:
-            raise exceptions.AuthenticationFailed({'error': 'Your email is not verified. Please verify it'})
+            raise serializers.ValidationError({'error': 'Your email is not verified. Please verify it'})
 
         return user.tokens()
